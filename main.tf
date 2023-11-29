@@ -132,15 +132,20 @@ resource "null_resource" "install_pod" {
     destination = "/home/${var.azuser}/appliance_init.tpl"
   }
 
-    provisioner "file" {
+  provisioner "file" {
     source = "install_status.sh"
     destination = "/home/${var.azuser}/install_status.sh"
+  }
+
+  provisioner "file" {
+    source = "appliance_setup.sh"
+    destination = "/home/${var.azuser}/appliance_setup.sh"
   }
 
   provisioner "remote-exec" {
     inline = [
     "sudo sh /home/${var.azuser}/install_status.sh /home/${var.azuser}/install-status.lock false ${each.value["role"]}", 
-    "[ ! -f /home/${var.azuser}/install-status.lock ] && nohup sudo bash /home/${var.azuser}/appliance_init.tpl -n ${each.value["role"]} -r ${var.masterIp} > /home/${var.azuser}/appliance_init.out 2>&1 &", 
+    "[ ! -f /home/${var.azuser}/install-status.lock ] && nohup sudo bash /home/${var.azuser}/appliance_init.tpl -n ${each.value["role"]} -o ${var.pod_owner} -r ${var.masterIp} -k ${var.X_API_Key} -s ${var.X_API_Secret} -t ${var.X_TIDENT} > /home/${var.azuser}/appliance_init.out 2>&1 &", 
     "sleep 1" ]
   }
 

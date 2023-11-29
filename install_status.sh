@@ -17,6 +17,7 @@ if [ -f $1 ]
                  then
                   SVC_NAME=k3s
                   kubectl get nodes
+                  kubectl get pods -A
                  fi 
                 systemctl --no-pager status $SVC_NAME | head
                 exit 0
